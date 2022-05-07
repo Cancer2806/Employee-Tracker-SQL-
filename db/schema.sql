@@ -1,4 +1,4 @@
--- Check forr existing database and delete if found --
+ -- Check forr existing database and delete if found --
 DROP DATABASE IF EXISTS employees_db;
 -- Create database --
 CREATE DATABASE employees_db;
@@ -26,7 +26,7 @@ CREATE TABLE roles (
 );
 
 -- employees table will contain the employees details --
--- each employee must be assigned a role title - link roles table with foreigh key --
+-- each employee must be assigned a role title - link roles table with foreign key --
 -- each employee may optionally be assigned to a manager who will also be listed in the employees table --
 CREATE TABLE employees (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
