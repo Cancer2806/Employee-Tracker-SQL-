@@ -41,7 +41,7 @@ VALUES
   ("Mike", "Chan", 3, 5),
   ("Kunal", "Singh", 6, 3),
   ("Sarah", "Lourd", 3, 5),
-  ("Tom", "Allen", 6, 5),
+  ("Tom", "Allen", 6, 3),
   ("Genius", "Fisher", 10, 1),
   ("Always", "Eating", 12, 4),
   ("Wonder", "Kid", 14, 4),

@@ -1,34 +1,95 @@
 // Define the required modules
+const inquirer = require('inquirer');
+const consoleTable = require('console.table')
+
+// const { connect } = require('./db/connect');
+const { viewAllDept } = require('./src/departments');
+const { viewAllRoles } = require('./src/roles');
+const { viewAllEmployees } = require('./src/employees');
 
 
-// Define port (required?) and router configuration
+// Use inquirer to provide options on startup:
+function getAction() {
+  return inquirer.prompt([
+    {
+      name: "chosenAction",
+      type: "list",
+      message: "What would you like to do?",
+      choices: [
+        "View All Employees",
+        "Add Employee",
+        "Update Employee Role",
+        "View All Roles",
+        "Add Role",
+        "View All Departments",
+        "Add Department",
+        "Quit"
+      ],
+    }
+  ]).then((actions) => {
+    // Depending on action chosen, execute the appropriate action
+    const { chosenAction } = actions;
+    switch (chosenAction) {
+      case 'View All Employees':
+        {
+          // Call function to read employee records and then display with console.table
+          const display = viewAllEmployees()
+            .then((result) => {
+              console.log(`\n`);
+              console.table(result);
+            });
+          break;
+        }
+      case 'Add Employee':
+        { console.log(`Add Employee ${chosenAction}`) }
+        break;
+      case 'Update Employee Role':
+        { console.log(`Update Employee Role ${chosenAction}`) }
+        break;
+      case 'View All Roles':
+        {
+          // Call function to read all roles and then display with console.table
+          const display = viewAllRoles()
+            .then((result) => {
+              console.log(`\n`);
+              console.table(result);
+            });
+          break;
+        }
+      case 'Add Role':
+        { console.log(`Add Role ${chosenAction}`) }
+        break;
+      case 'View All Departments':
+        {
+          // Call function to read all departments and then display with console.table
+          const display = viewAllDept()
+            .then((result) => {
+              console.log(`\n`);
+              console.table(result);
+            });
+          break;
+        }
+      case 'Add Department':
+        { console.log(`Add Department ${chosenAction}`) }
+        break;
+      default:
+        {
+          console.log(`Enjoy the rest of your day :)`);
+          process.exit(0);  };
+    };
+    
+    // Return to get further actions until User selects Quit
+    getAction();
+  })
+    
+  .catch ((error) => {
+    console.log(`Something went wrong.  This is the error message: ${error}`);
+  })
+}
 
+// Commence the Application
+getAction();
 
-
-// Connect to Database
-
-
-/* Use inquirer to provide options on startup:
-*  presented with the following options: , add a department, add a role, add an employee, and update an employee role
-*  view all departments, view all roles, view all employees,
-*  add a department, add a role, add an employee, and update an employee role
-*/
-
-
-
-/*  WHEN I choose to view all departments
-*  THEN I am presented with a formatted table showing department names and department ids
-*/
-
-
-/*  WHEN I choose to view all roles
-*  THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
-*/
-
-/*   WHEN I choose to view all employees
-*  THEN I am presented with a formatted table showing employee data, 
-*  including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
-*/
 
 /*  WHEN I choose to add a department
 *  THEN I am prompted to enter the name of the department and that department is added to the database
