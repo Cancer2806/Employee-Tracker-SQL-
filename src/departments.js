@@ -3,7 +3,14 @@ const { connect } = require("../db/connect");
 
 // CRUD
 // Create a new department
+async function addDept(newDept) {
+  // for future, look at checking to ensure entry is not already in database
 
+  const connection = await connect();
+  const query = `INSERT INTO departments (dept_name) VALUES ("${newDept}")`;
+  
+  return connection.execute(query);
+}
 
 
 
@@ -11,7 +18,7 @@ const { connect } = require("../db/connect");
 async function viewAllDept() {
   // console.log(`Here I am`);
   const connection = await connect();
-  const query = "SELECT id AS ID, dept_name AS Department FROM departments ORDER BY dept_name";
+  const query = `SELECT id AS ID, dept_name AS Department FROM departments ORDER BY dept_name`;
 
   const [display] = await connection.query(query);
   if (display.length === 0) {
@@ -32,5 +39,6 @@ async function viewAllDept() {
 
 // Export modules
 module.exports = {
-  viewAllDept
+  viewAllDept,
+  addDept
 };

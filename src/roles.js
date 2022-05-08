@@ -1,9 +1,21 @@
+// Define the required modules
+const { viewAllDept,  } = require('./departments');
+
 // Connect to Database
 const { connect } = require("../db/connect");
 
 // CRUD
 // Create a new role
 
+async function addRole(newRole, newSalary, dept) {
+  // for future, look at checking to ensure entry is not already in database
+
+  const connection = await connect();
+  // need to determine the ID of the department to add to roles record
+  // const query = `INSERT INTO departments (dept_name) VALUES ("${newDept}")`;
+  return console.log(`The role role is ${newRole}, ${newSalary}, ${dept}`)
+  // return connection.execute(query);
+}
 
 
 
@@ -18,7 +30,7 @@ async function viewAllRoles() {
   if (result.length === 0) {
     console.log(`No roles found`);
   }
-  // console.table(display);
+  
   return result;
 }
 
@@ -33,5 +45,6 @@ async function viewAllRoles() {
 
 // Export modules
 module.exports = {
-  viewAllRoles
+  viewAllRoles,
+  addRole
 };
