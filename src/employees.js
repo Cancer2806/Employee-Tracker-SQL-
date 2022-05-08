@@ -32,8 +32,6 @@ async function addEmployee(firstName, lastName, role, mgr) {
   return connection.execute(addQuery);
 }
 
-
-
 // Read all employee records
 async function viewAllEmployees() {
   const connection = await connect();
@@ -47,16 +45,35 @@ async function viewAllEmployees() {
 }
 
 
-// Update an employees record
+// Update an employees role
+async function updateRole(empName, newRole) {
+ // Break name into first and last for the query
+  const nameEmp = empName.split(" ");
 
+  const connection = await connect();
+  
+  // query to extract the role id based on the role title
+  const queryRole = `SELECT id FROM roles WHERE title = "${newRole}"`;
+  const [queryID] = await connection.query(queryRole);
+  const role_id = queryID[0].id;
+  
+  // query to extract the employee ID based on first and last name
+  const empQuery = `SELECT id FROM employees WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;
+  const [employID] = await connection.query(empQuery);
+  const empId = employID[0].id;
+  
+  // Query for updating the employees record
+  const updateQuery = `UPDATE employees SET role_id = ${role_id} WHERE id = ${empId}`;
+   
+  return connection.execute(updateQuery);
+}
 
 
 // Future Delete an employee
 
-
-
 // Export modules
 module.exports = {
   viewAllEmployees,
-  addEmployee
+  addEmployee,
+  updateRole
 };

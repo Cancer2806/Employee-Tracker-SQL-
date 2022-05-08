@@ -5,7 +5,7 @@ const consoleTable = require('console.table')
 // const { connect } = require('./db/connect');
 const { viewAllDept, addDept } = require('./src/departments');
 const { viewAllRoles, addRole } = require('./src/roles');
-const { viewAllEmployees, addEmployee } = require('./src/employees');
+const { viewAllEmployees, addEmployee, updateRole } = require('./src/employees');
 
 /*WHEN I start the application THEN I am presented with the following options: 
 * view all departments, view all roles, view all employees, add a department, 
@@ -19,13 +19,13 @@ function mainMenu() {
       type: "list",
       message: "What would you like to do?",
       choices: [
-        "View All Departments",
-        "View All Roles",
         "View All Employees",
-        "Add a Department",
-        "Add a Role",
         "Add an Employee",
         "Update an Employee's Role",
+        "View All Roles",
+        "Add a Role",
+        "View All Departments",
+        "Add a Department",
         "Quit",
       ],
     }
@@ -58,6 +58,7 @@ async function getRoleDetails() {
       for (let i = 0; i < result.length; i++) {
         listDept.push(result[i].Department);
       };
+      listDept.sort();
     })
       return inquirer.prompt([
         {
@@ -91,16 +92,17 @@ async function getEmployeeDetails() {
     .then((results) => {
       for (let i = 0; i < results.length; i++) {
         listRoles.push(results[i].Title);
-      }
+      };
+      listRoles.sort();
     });
     await viewAllEmployees()
       .then((results) => {
         for (let i = 0; i < results.length; i++) {
             let strName = `${results[i]["First Name"]} ${results[i]["Last Name"]}`
             listMgrs.push(strName);
-          }
+        };
+        listMgrs.sort();
         })
-        // return console.log(`list Roles ${listRoles}, list manager ${listMgrs}`)
   return inquirer.prompt([
     {
       name: "firstName",
@@ -126,7 +128,45 @@ async function getEmployeeDetails() {
     }
   ])
 }
-    
+
+/*  WHEN I choose to update an employee role
+*  THEN I am prompted to select an employee to update and their new role and this information is updated in the database
+*/
+// Use inquirer to obtain the details of the new employee
+async function changeRole() {
+  // variables to hold arrays for choosing role and manager
+  const listRoles = [];
+  const listEmps = [];
+  await viewAllRoles()
+    .then((results) => {
+      for (let i = 0; i < results.length; i++) {
+        listRoles.push(results[i].Title);
+      };
+      listRoles.sort();
+    });
+  await viewAllEmployees()
+    .then((results) => {
+      for (let i = 0; i < results.length; i++) {
+        let strName = `${results[i]["First Name"]} ${results[i]["Last Name"]}`
+        listEmps.push(strName);
+      };
+      listEmps.sort();
+    })
+  return inquirer.prompt([
+    {
+      name: "empName",
+      type: "list",
+      message: "Which employee do you want to change?",
+      choices: listEmps,
+    },
+    {
+      name: "newRole",
+      type: "list",
+      message: "Select the new Role:",
+      choices: listRoles,
+    }
+  ])
+}
 
 // Main controlling function
 function main() {
@@ -137,63 +177,65 @@ function main() {
     const { chosenAction } = actions;
     switch (chosenAction) {
       case 'View All Employees':
-        {
-          // Call function to read employee records and then display with console.table
-          return viewAllEmployees()
-            .then((result) => {
-              console.table(result);
-            });
+        // Call function to read employee records and then display with console.table
+        return viewAllEmployees()
+          .then((result) => {
+            console.table(result);
+          });
           break;
-        }
       case 'Add an Employee':
       // prompt for employee details and add to the database
         return getEmployeeDetails()
           .then((details) => {
             const { firstName, lastName, role, mgr } = details;
-            addEmployee(firstName, lastName, role, mgr)
+            addEmployee(firstName, lastName, role, mgr);
+            console.log(`\n ${firstName} ${lastName} added to Employee Database \n`);
           });
         break;
       case `Update an Employee's Role`:
-        { console.log(`Update Employee Role ${chosenAction}`) }
+        // prompt for employee name and new role
+        return changeRole()
+          .then((details) => {
+            const { empName, newRole } = details;
+            updateRole(empName, newRole);
+            console.log(`\n ${empName} title updated to ${newRole} \n`);
+          });
         break;
       case 'View All Roles':
-        {
-          // Call function to read all roles and then display with console.table
-          return viewAllRoles()
-            .then((result) => {
-              console.table(result);
-            });
-          break;
-        }
+        // Call function to read all roles and then display with console.table
+        return viewAllRoles()
+          .then((result) => {
+            console.table(result);
+          });
+        break;
       case 'Add a Role':
         // prompt for rquired details and then add to database
-          return getRoleDetails()
-            .then((responses) => {
-              const { newRole, newSalary, dept } = responses;
-              addRole(newRole, newSalary, dept)
+        return getRoleDetails()
+          .then((responses) => {
+            const { newRole, newSalary, dept } = responses;
+            addRole(newRole, newSalary, dept);
+            console.log(`\n ${newRole} added to Database \n`);
       });
         break;
       case 'View All Departments':
-        {
-          // Call function to read all departments and then display with console.table
-          return viewAllDept()
-            .then((result) => {
-              console.table(result);
-            });
-          break;
-        }
+        // Call function to read all departments and then display with console.table
+        return viewAllDept()
+          .then((result) => {
+            console.table(result);
+          });
+        break;
       case 'Add a Department':
         // prompt for new department name and then add to database
         return getDeptName()
-            .then((response) => {
-              const { newDept } = response;
-              addDept(newDept);
-              console.log(`New deparment added`);
-            });
+          .then((response) => {
+            const { newDept } = response;
+            addDept(newDept);
+            console.log(`\n ${newDept} added to Database \n`);
+          });
         break;
       default:
         {
-          console.log(`Enjoy the rest of your day :)`);
+          console.log(`\n Enjoy the rest of your day :)`);
           process.exit(0);  };
     };
   })
@@ -203,7 +245,7 @@ function main() {
   })
   
   .catch ((error) => {
-    console.log(`Something went wrong.  This is the error message: ${error}`);
+    console.log(`\n Something went wrong.  This is the error message: ${error}`);
   })
 }
 
@@ -211,19 +253,7 @@ function main() {
 main();
 
 
-
-
-/*  WHEN I choose to update an employee role
-*  THEN I am prompted to select an employee to update and their new role and this information is updated in the database
-*/
-
-
-
-
-/* Options if have time
-*  make your queries asynchronous
-*  use a separate file that contains functions for performing specific SQL queries
-*  A constructor function or class could be helpful for organizing these
+/* Optional extras
 *  Update employee managers.
 *  View employees by manager.
 *  View employees by department.
