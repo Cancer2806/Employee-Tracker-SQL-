@@ -45,11 +45,13 @@ function getDeptName() {
     }
   ])
 };
+
 /*  WHEN I choose to add a role
 *  THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
 */
-// Use inquirer to obtain the new department name
+// Use inquirer to obtain the details of the new role
 async function getRoleDetails() {
+  // function to populate the department list in the inquirer statement
   const listDept = [];
   await viewAllDept()
     .then((result) => {
@@ -57,15 +59,6 @@ async function getRoleDetails() {
         listDept.push(result[i].Department);
       };
     })
-  // function to return an array of department names
-  // getListDept()
-    // .then((listOfDept) => {
-      // console.log(`I cant udnerstand why this returns thsi ${listDept}`)
-      // return console.log(`This is the response: ${listDept}`);
-  
-  
-    // .then((listDept) => {
-      
       return inquirer.prompt([
         {
           name: "newRole",
@@ -86,6 +79,29 @@ async function getRoleDetails() {
       ])
 };
 
+/*  WHEN I choose to add an employee
+*  THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
+*/
+// Use inquirer to obtain the details of the new employee
+async function getEmployeeDetails {
+  // variables to hold arrays for choosing role and manager
+  const listRoles = [];
+  const listMgrs = [];
+  await viewAllRoles()
+    .then((results) => {
+      for (let i = 0; i < results.length; i++) {
+        listRoles.push(results[i].title);
+      }
+      await viewAllEmployees()
+        .then((result) => {
+          for (let i = 0; i < result.length; i++) {
+            listMgrs.push(result[i].first_name);
+          }
+        })
+        return console.log(`list Roles ${listRoles}, list manager ${listMgrs}`)
+    })
+}
+
 // Main controlling function
 function main() {
 // Use inquirer to provide options on startup:
@@ -104,6 +120,7 @@ function main() {
           break;
         }
       case 'Add an Employee':
+      
         { console.log(`Add Employee ${chosenAction}`) }
         break;
       case `Update an Employee's Role`:
@@ -114,39 +131,34 @@ function main() {
           // Call function to read all roles and then display with console.table
           return viewAllRoles()
             .then((result) => {
-              console.log(`\n`);
               console.table(result);
             });
           break;
         }
       case 'Add a Role':
+        // prompt for rquired details and then add to database
           return getRoleDetails()
             .then((responses) => {
-              console.log(responses);
               const { newRole, newSalary, dept } = responses;
-              console.log(`new Role: ${newRole} ${newSalary} ${dept}`)
-            // })
-            // .then(() => {
               addRole(newRole, newSalary, dept)
       });
         break;
-      
       case 'View All Departments':
         {
           // Call function to read all departments and then display with console.table
           return viewAllDept()
             .then((result) => {
-              console.log(`\n`);
               console.table(result);
             });
           break;
         }
-
       case 'Add a Department':
+        // prompt for new department name and then add to database
         return getDeptName()
             .then((response) => {
               const { newDept } = response;
-              addDept(newDept)
+              addDept(newDept);
+              console.log(`New deparment added`);
             });
         break;
       default:
@@ -170,12 +182,6 @@ main();
 
 
 
-
-
-
-/*  WHEN I choose to add an employee
-*  THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
-*/
 
 /*  WHEN I choose to update an employee role
 *  THEN I am prompted to select an employee to update and their new role and this information is updated in the database

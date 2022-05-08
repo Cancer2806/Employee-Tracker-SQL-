@@ -1,10 +1,9 @@
 // Connect to Database
 const { connect } = require("../db/connect");
 
-// CRUD
 // Create a new department
 async function addDept(newDept) {
-  // for future, look at checking to ensure entry is not already in database
+  // for future, look at catching error if name is already in database (unique field)
 
   const connection = await connect();
   const query = `INSERT INTO departments (dept_name) VALUES ("${newDept}")`;
@@ -16,25 +15,22 @@ async function addDept(newDept) {
 
 // Read all departments
 async function viewAllDept() {
-  // console.log(`Here I am`);
   const connection = await connect();
   const query = `SELECT id AS ID, dept_name AS Department FROM departments ORDER BY dept_name`;
 
   const [display] = await connection.query(query);
   if (display.length === 0) {
-    console.log(`No departments found`);
+    return console.log(`No departments found`);
   }
-  // console.table(display);
   return display;
 }
 
 
-// Update department
+// Future Update department name
 
 
-
-// Delete a department
-// Only permitted if department is not linked to a role
+// Future Delete a department
+  // Only permitted if department is not linked to a role
 
 
 // Export modules

@@ -10,14 +10,14 @@ USE employees_db;
 -- deparments table will hold the departments within the establishment --
 CREATE TABLE departments (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  dept_name VARCHAR(30) NOT NULL
+  dept_name VARCHAR(30) NOT NULL UNIQUE
 );
 
 -- roles table will contain the job titles within the organisation --
 -- each role must be assigned to a department - link departments table with foreign key --
 CREATE TABLE roles (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(30) NOT NULL,
+  title VARCHAR(30) NOT NULL UNIQUE,
   salary decimal,
   department_id INT NOT NULL,
   FOREIGN KEY (department_id)

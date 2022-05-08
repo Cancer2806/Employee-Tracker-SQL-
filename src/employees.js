@@ -1,7 +1,7 @@
 // Connect to Database
 const { connect } = require("../db/connect");
 
-// CRUD
+
 // Create a new employee
 
 
@@ -20,11 +20,11 @@ async function viewAllEmployees() {
 }
 
 
-// Update department
+// Update an employees record
 
 
 
-// Delete an employee
+// Future Delete an employee
 
 
 
