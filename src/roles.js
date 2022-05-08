@@ -11,7 +11,7 @@ async function addRole(newRole, newSalary, dept) {
   // for future, look at catching error if title is already in database (unique field)
 
   const connection = await connect();
-  // need to determine the ID of the department to add to roles record
+  // Determine the ID of the department to add to roles record
   const queryDeptId = `SELECT id FROM departments WHERE dept_name = "${dept}"`;
   const [deptID] = await connection.query(queryDeptId);
   // Query for inserting new record

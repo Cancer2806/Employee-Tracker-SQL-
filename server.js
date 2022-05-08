@@ -5,7 +5,7 @@ const consoleTable = require('console.table')
 // const { connect } = require('./db/connect');
 const { viewAllDept, addDept } = require('./src/departments');
 const { viewAllRoles, addRole } = require('./src/roles');
-const { viewAllEmployees } = require('./src/employees');
+const { viewAllEmployees, addEmployee } = require('./src/employees');
 
 /*WHEN I start the application THEN I am presented with the following options: 
 * view all departments, view all roles, view all employees, add a department, 
@@ -83,24 +83,50 @@ async function getRoleDetails() {
 *  THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
 */
 // Use inquirer to obtain the details of the new employee
-async function getEmployeeDetails {
+async function getEmployeeDetails() {
   // variables to hold arrays for choosing role and manager
   const listRoles = [];
-  const listMgrs = [];
+  const listMgrs = ["None"];
   await viewAllRoles()
     .then((results) => {
       for (let i = 0; i < results.length; i++) {
-        listRoles.push(results[i].title);
+        listRoles.push(results[i].Title);
       }
-      await viewAllEmployees()
-        .then((result) => {
-          for (let i = 0; i < result.length; i++) {
-            listMgrs.push(result[i].first_name);
+    });
+    await viewAllEmployees()
+      .then((results) => {
+        for (let i = 0; i < results.length; i++) {
+            let strName = `${results[i]["First Name"]} ${results[i]["Last Name"]}`
+            listMgrs.push(strName);
           }
         })
-        return console.log(`list Roles ${listRoles}, list manager ${listMgrs}`)
-    })
+        // return console.log(`list Roles ${listRoles}, list manager ${listMgrs}`)
+  return inquirer.prompt([
+    {
+      name: "firstName",
+      type: "input",
+      message: "What is the employee's first name?",
+    },
+    {
+      name: "lastName",
+      type: "input",
+      message: "What is the employee's last name?",
+    },
+    {
+      name: "role",
+      type: "list",
+      message: "What is the employee's role?",
+      choices: listRoles,
+    },
+    {
+      name: "mgr",
+      type: "list",
+      message: "Who will the employee report to?",
+      choices: listMgrs,
+    }
+  ])
 }
+    
 
 // Main controlling function
 function main() {
@@ -120,8 +146,12 @@ function main() {
           break;
         }
       case 'Add an Employee':
-      
-        { console.log(`Add Employee ${chosenAction}`) }
+      // prompt for employee details and add to the database
+        return getEmployeeDetails()
+          .then((details) => {
+            const { firstName, lastName, role, mgr } = details;
+            addEmployee(firstName, lastName, role, mgr)
+          });
         break;
       case `Update an Employee's Role`:
         { console.log(`Update Employee Role ${chosenAction}`) }
