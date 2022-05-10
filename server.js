@@ -260,8 +260,8 @@ function main() {
         return selectDept()
           .then((response) => {
             const { dept } = response;
-            deleteDept(dept);
-            console.log(`\n ${dept} removed from Database \n`);
+            deleteDept(dept)
+          // console.log(`\n ${dept} removed from Database \n`);
           });
         break;
       default:

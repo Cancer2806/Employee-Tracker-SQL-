@@ -35,7 +35,13 @@ async function deleteDept(dept) {
   const connection = await connect();
   const query = `DELETE FROM departments WHERE dept_name = "${dept}"`;
 
-  return connection.execute(query);
+  return connection.execute(query)
+      .then(() => {
+        console.log(`Deletion of ${dept} was successful`);
+      })
+      .catch(() => {
+        console.log(`\n Cannot delete ${dept} if roles are attached to the Department`);
+      })
 }
 
 
