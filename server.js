@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const consoleTable = require('console.table')
 
 // const { connect } = require('./db/connect');
-const { viewAllDept, addDept } = require('./src/departments');
+const { viewAllDept, addDept, deleteDept } = require('./src/departments');
 const { viewAllRoles, addRole } = require('./src/roles');
 const { viewAllEmployees, addEmployee, updateRole } = require('./src/employees');
 
@@ -26,6 +26,7 @@ function mainMenu() {
         "Add a Role",
         "View All Departments",
         "Add a Department",
+        "Delete a Department",
         "Quit",
       ],
     }
@@ -78,6 +79,27 @@ async function getRoleDetails() {
           choices: listDept,
         }
       ])
+};
+
+// Delete a department
+async function selectDept() {
+  // function to populate the department list in the inquirer statement
+  const listDept = [];
+  await viewAllDept()
+    .then((result) => {
+      for (let i = 0; i < result.length; i++) {
+        listDept.push(result[i].Department);
+      };
+      listDept.sort();
+    })
+  return inquirer.prompt([
+    {
+      name: "dept",
+      type: "list",
+      message: "Which department do you want to delete:",
+      choices: listDept,
+    }
+  ])
 };
 
 /*  WHEN I choose to add an employee
@@ -233,6 +255,15 @@ function main() {
             console.log(`\n ${newDept} added to Database \n`);
           });
         break;
+      case 'Delete a Department':
+        // prompt for new department name and then add to database
+        return selectDept()
+          .then((response) => {
+            const { dept } = response;
+            deleteDept(dept);
+            console.log(`\n ${dept} removed from Database \n`);
+          });
+        break;
       default:
         {
           console.log(`\n Enjoy the rest of your day :)`);
@@ -257,6 +288,6 @@ main();
 *  Update employee managers.
 *  View employees by manager.
 *  View employees by department.
-*  Delete departments, roles, and employees.
+*  Delete roles, and employees.
 *  View the total utilized budget of a department;in other words, the combined salaries of all employees in that department.
 */

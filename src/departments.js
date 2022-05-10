@@ -29,12 +29,19 @@ async function viewAllDept() {
 // Future Update department name
 
 
-// Future Delete a department
-  // Only permitted if department is not linked to a role
+//Delete a department
+  // Only permitted if department is not linked to a role - enforced by Delete No Action
+async function deleteDept(dept) {
+  const connection = await connect();
+  const query = `DELETE FROM departments WHERE dept_name = "${dept}"`;
+
+  return connection.execute(query);
+}
 
 
 // Export modules
 module.exports = {
   viewAllDept,
-  addDept
+  addDept,
+  deleteDept
 };
