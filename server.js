@@ -2,15 +2,16 @@
 // const inquirer = require('inquirer');
 const consoleTable = require('console.table')
 
-const { mainMenu, getDeptName, getRoleDetails, selectDept, viewByDept, getEmployeeDetails, changeRole, selectRole, selectEmployee } = require(`./src/questions`);
+const { mainMenu, getDeptName, getRoleDetails, selectDept, getEmployeeDetails, changeRole, selectRole, selectEmployee } = require(`./src/questions`);
 const { viewAllDept, addDept, deleteDept } = require('./src/departments');
 const { viewAllRoles, addRole, deleteRole } = require('./src/roles');
-const { viewAllEmployees, addEmployee, updateRole, viewDeptEmployees, deleteEmployee } = require('./src/employees');
+const { viewAllEmployees, addEmployee, updateRole, viewDeptEmployees, deleteEmployee, deptBudget } = require('./src/employees');
 
 
 // Main controlling function
 function main() {
 // call mainMenu file in questions.js to provide options on startup using inquirer:
+  // console.clear();
   mainMenu()
   .then((actions) => {
     // Depending on action chosen, execute the appropriate code
@@ -20,16 +21,20 @@ function main() {
         // Call function to read employee records and then display with console.table
         return viewAllEmployees()
           .then((result) => {
+            console.clear();
             console.table(result);
+            console.log(`Press up/down arrow to continue`);
           });
         break;
       case 'View Employees by Dept':
         // Call function to read employee records for a specified department and then display with console.table
-        return viewByDept()
+        return selectDept("Which department do you want to view:")
           .then((response) => {
             const { dept } = response;
             viewDeptEmployees(dept)
               .then((result) => {
+                console.clear();
+                console.log(`Press up/down arrow to continue \n \n`);
                 console.table(result);
               })
           });
@@ -63,6 +68,8 @@ function main() {
         // Call function to read all roles and then display with console.table
         return viewAllRoles()
           .then((result) => {
+            console.clear();
+            console.log(`Press up/down arrow to continue \n \n`);
             console.table(result);
           });
         break;
@@ -87,6 +94,8 @@ function main() {
         // Call function to read all departments and then display with console.table
         return viewAllDept()
           .then((result) => {
+            console.clear();
+            console.log(`Press up/down arrow to continue \n \n`);
             console.table(result);
           });
         break;
@@ -101,10 +110,18 @@ function main() {
         break;
       case 'Delete a Department':
         // prompt for new department name and then add to database
-        return selectDept()
+        return selectDept("Which department do you want to delete?")
           .then((response) => {
             const { dept } = response;
             deleteDept(dept)
+          });
+        break;
+      case 'View Department Budget':
+        // Call function to determine annual budget of a department
+        return selectDept("Which department's budget do you want to view:")
+          .then((response) => {
+            const { dept } = response;
+            deptBudget(dept)
           });
         break;
       default:
@@ -124,11 +141,11 @@ function main() {
 }
 
 // Commence the Application
+console.clear();
 main();
 
 
 /* Optional extras
 *  Update employee managers.
 *  View employees by manager.
-*  View the total utilized budget of a department;in other words, the combined salaries of all employees in that department.
 */

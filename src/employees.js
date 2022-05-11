@@ -28,7 +28,13 @@ async function addEmployee(firstName, lastName, role, mgr) {
     addQuery = `INSERT INTO employees (first_name, last_name, role_id) VALUES ("${firstName}", "${lastName}", ${role_id})`;
   };
 
-  return connection.execute(addQuery);
+  return connection.execute(addQuery)
+    .then(() => {
+      console.log(`\n Adding of ${firstName} successful`);
+    })
+    .catch(() => {
+      console.log(`\n Adding of ${firstName} failed`);
+    })
 }
 
 // Read all employee records
@@ -95,13 +101,7 @@ async function updateRole(empName, newRole) {
 async function deleteEmployee(empName) {
   // Break name into first and last for the query
   const nameEmp = empName.split(" ");
-  console.log(`empName ${empName} to name Emp: ${nameEmp[0]} AND last_name = ${nameEmp[1]}`)
   const connection = await connect();
-
-  // // query to extract the employee ID based on first and last name
-  // const empQuery = `SELECT id FROM employees WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;
-  // const [employID] = await connection.query(empQuery);
-  // const empId = employID[0].id;
 
   // Query for deleting the employees record
   const deleteQuery = `DELETE From employees WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;
@@ -115,11 +115,36 @@ async function deleteEmployee(empName) {
     })
 }
 
+async function deptBudget(dept) {
+  const connection = await connect();
+
+  // query to extract the dept id based on the dept name
+  const queryDept = `SELECT id FROM departments WHERE dept_name = "${dept}"`;
+  const [queryID] = await connection.query(queryDept);
+  const idDept = queryID[0].id;
+  
+  // Query for calculating the sum of the employees in the department
+  const sumQuery = `SELECT SUM(salary) AS TotalSalary FROM roles INNER JOIN employees ON employees.role_id = roles.id WHERE department_id = ${idDept}`;
+  
+  const [sumValue] = await connection.query(sumQuery);
+  if (sumValue[0].TotalSalary) {
+    console.clear();
+    console.log(`\n The budget for ${dept} is ${sumValue[0].TotalSalary}`);  
+    console.log(`Press up/down arrow to continue`);
+  } else {
+    console.clear();
+    console.log(`\n There are no employees allocated to ${dept} and the budget is Nil`);
+    console.log(`Press up/down arrow to continue`);
+  }
+  return 
+};
+
 // Export modules
 module.exports = {
   viewAllEmployees,
   addEmployee,
   updateRole,
   viewDeptEmployees,
-  deleteEmployee
+  deleteEmployee,
+  deptBudget
 };

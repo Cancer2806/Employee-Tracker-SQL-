@@ -29,6 +29,7 @@ function mainMenu() {
         "View All Departments",
         "Add a Department",
         "Delete a Department",
+        "View Department Budget",
         "Quit",
       ],
     }
@@ -105,7 +106,7 @@ async function selectRole() {
 };
 
 // Delete a department
-async function selectDept() {
+async function selectDept(message) {
   // function to populate the department list in the inquirer statement
   const listDept = [];
   await viewAllDept()
@@ -119,32 +120,12 @@ async function selectDept() {
     {
       name: "dept",
       type: "list",
-      message: "Which department do you want to delete:",
+      message: message,
       choices: listDept,
     }
   ])
 };
 
-// View Employees by selected Department
-async function viewByDept() {
-  // function to populate the department list in the inquirer statement
-  const listDept = [];
-  await viewAllDept()
-    .then((result) => {
-      for (let i = 0; i < result.length; i++) {
-        listDept.push(result[i].Department);
-      };
-      listDept.sort();
-    })
-  return inquirer.prompt([
-    {
-      name: "dept",
-      type: "list",
-      message: "Which department do you want to view:",
-      choices: listDept,
-    }
-  ])
-};
 
 /*  WHEN I choose to add an employee
 *  THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
@@ -262,7 +243,6 @@ module.exports = {
   getDeptName,
   getRoleDetails,
   selectDept,
-  viewByDept,
   getEmployeeDetails,
   selectEmployee,
   changeRole,
