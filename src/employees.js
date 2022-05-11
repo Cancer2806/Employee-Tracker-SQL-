@@ -2,7 +2,6 @@
 const consoleTable = require('console.table');
 const { connect } = require("../db/connect");
 
-
 // Create a new employee
 async function addEmployee(firstName, lastName, role, mgr) {
   const mgrName = mgr.split(" ");
@@ -44,6 +43,23 @@ async function viewAllEmployees() {
   return result;
 }
 
+// Read all employee records of a specified department
+async function viewDeptEmployees(dept) {
+  const connection = await connect();
+
+  // query to extract the dept id based on the dept name
+  const queryDept = `SELECT id FROM departments WHERE dept_name = "${dept}"`;
+  const [queryID] = await connection.query(queryDept);
+  const idDept = queryID[0].id;
+  
+  // select query to print employee table, of a specified department, sorted by first name, with manager name, title and salary
+  const query = `SELECT e.id as 'ID', e.first_name AS 'First Name', e.last_name AS 'Last Name', roles.title AS Title, roles.salary AS Salary, IFNULL(CONCAT(m.first_name, ' ', m.last_name),'Manager') as 'Manager' FROM employees e JOIN roles ON roles.id = e.role_id LEFT JOIN employees m ON m.id = e.manager_id WHERE roles.department_id = ${idDept} ORDER BY roles.title, m.first_name`;
+  const [result] = await connection.query(query);
+  if (result.length === 0) {
+    console.log(`No employees found`);
+  }
+  return result;
+}
 
 // Update an employees role
 async function updateRole(empName, newRole) {
@@ -75,5 +91,6 @@ async function updateRole(empName, newRole) {
 module.exports = {
   viewAllEmployees,
   addEmployee,
-  updateRole
+  updateRole,
+  viewDeptEmployees
 };

@@ -5,7 +5,7 @@ const consoleTable = require('console.table')
 // const { connect } = require('./db/connect');
 const { viewAllDept, addDept, deleteDept } = require('./src/departments');
 const { viewAllRoles, addRole } = require('./src/roles');
-const { viewAllEmployees, addEmployee, updateRole } = require('./src/employees');
+const { viewAllEmployees, addEmployee, updateRole, viewDeptEmployees } = require('./src/employees');
 
 /*WHEN I start the application THEN I am presented with the following options: 
 * view all departments, view all roles, view all employees, add a department, 
@@ -20,6 +20,7 @@ function mainMenu() {
       message: "What would you like to do?",
       choices: [
         "View All Employees",
+        "View Employees by Dept",
         "Add an Employee",
         "Update an Employee's Role",
         "View All Roles",
@@ -97,6 +98,27 @@ async function selectDept() {
       name: "dept",
       type: "list",
       message: "Which department do you want to delete:",
+      choices: listDept,
+    }
+  ])
+};
+
+// View Employees by selected Department
+async function viewByDept() {
+  // function to populate the department list in the inquirer statement
+  const listDept = [];
+  await viewAllDept()
+    .then((result) => {
+      for (let i = 0; i < result.length; i++) {
+        listDept.push(result[i].Department);
+      };
+      listDept.sort();
+    })
+  return inquirer.prompt([
+    {
+      name: "dept",
+      type: "list",
+      message: "Which department do you want to view:",
       choices: listDept,
     }
   ])
@@ -204,7 +226,18 @@ function main() {
           .then((result) => {
             console.table(result);
           });
-          break;
+        break;
+      case 'View Employees by Dept':
+        // Call function to read employee records for a specified department and then display with console.table
+        return viewByDept()
+          .then((response) => {
+            const { dept } = response;
+            viewDeptEmployees(dept)
+              .then((result) => {
+                console.table(result);
+              })
+          });
+        break;
       case 'Add an Employee':
       // prompt for employee details and add to the database
         return getEmployeeDetails()
@@ -252,7 +285,7 @@ function main() {
           .then((response) => {
             const { newDept } = response;
             addDept(newDept);
-            console.log(`\n ${newDept} added to Database \n`);
+            // console.log(`\n ${newDept} added to Database \n`);
           });
         break;
       case 'Delete a Department':
@@ -261,7 +294,6 @@ function main() {
           .then((response) => {
             const { dept } = response;
             deleteDept(dept)
-          // console.log(`\n ${dept} removed from Database \n`);
           });
         break;
       default:
@@ -287,7 +319,6 @@ main();
 /* Optional extras
 *  Update employee managers.
 *  View employees by manager.
-*  View employees by department.
 *  Delete roles, and employees.
 *  View the total utilized budget of a department;in other words, the combined salaries of all employees in that department.
 */

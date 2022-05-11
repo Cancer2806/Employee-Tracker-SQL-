@@ -3,15 +3,19 @@ const { connect } = require("../db/connect");
 
 // Create a new department
 async function addDept(newDept) {
-  // for future, look at catching error if name is already in database (unique field)
-
-  const connection = await connect();
+  // for future, look at catching error if name is already in database (unique field) - enforced by db constraints
   const query = `INSERT INTO departments (dept_name) VALUES ("${newDept}")`;
   
-  return connection.execute(query);
+  const connection = await connect();
+  
+  return connection.execute(query)
+    .then(() => {
+      console.log(`\n ${newDept} successfully added`);
+    })
+    .catch((err) => {
+        console.log(`\n ${newDept} already exists`);
+      })
 }
-
-
 
 // Read all departments
 async function viewAllDept() {
@@ -32,9 +36,10 @@ async function viewAllDept() {
 //Delete a department
   // Only permitted if department is not linked to a role - enforced by Delete No Action
 async function deleteDept(dept) {
-  const connection = await connect();
   const query = `DELETE FROM departments WHERE dept_name = "${dept}"`;
-
+  
+  const connection = await connect();
+  
   return connection.execute(query)
       .then(() => {
         console.log(`Deletion of ${dept} was successful`);
