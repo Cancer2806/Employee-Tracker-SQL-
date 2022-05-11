@@ -79,18 +79,47 @@ async function updateRole(empName, newRole) {
   const empId = employID[0].id;
   
   // Query for updating the employees record
-  const updateQuery = `UPDATE employees SET role_id = ${role_id} WHERE id = ${empId}`;
+  const updateQuery = `UPDATE employees SET role_id = ${role_id} WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;
    
-  return connection.execute(updateQuery);
+  return connection.execute(updateQuery)
+    .then(() => {
+      console.log(`Update of ${empName}'s was successful`);
+    })
+    .catch(() => {
+      console.log(`\n Update for ${empName} failed`);
+    });
 }
 
 
-// Future Delete an employee
+// Delete an employee
+async function deleteEmployee(empName) {
+  // Break name into first and last for the query
+  const nameEmp = empName.split(" ");
+  console.log(`empName ${empName} to name Emp: ${nameEmp[0]} AND last_name = ${nameEmp[1]}`)
+  const connection = await connect();
+
+  // // query to extract the employee ID based on first and last name
+  // const empQuery = `SELECT id FROM employees WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;
+  // const [employID] = await connection.query(empQuery);
+  // const empId = employID[0].id;
+
+  // Query for deleting the employees record
+  const deleteQuery = `DELETE From employees WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;
+
+  return connection.execute(deleteQuery)
+  .then(() => {
+    console.log(`Deletion of ${empName} was successful`);
+  })
+    .catch(() => {
+      console.log(`\n Cannot delete ${empName}`);
+    })
+}
 
 // Export modules
 module.exports = {
   viewAllEmployees,
   addEmployee,
   updateRole,
-  viewDeptEmployees
+  viewDeptEmployees,
+  deleteEmployee
 };

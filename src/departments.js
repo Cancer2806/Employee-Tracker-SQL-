@@ -3,7 +3,7 @@ const { connect } = require("../db/connect");
 
 // Create a new department
 async function addDept(newDept) {
-  // for future, look at catching error if name is already in database (unique field) - enforced by db constraints
+  // only permitted if the name is not already in the database
   const query = `INSERT INTO departments (dept_name) VALUES ("${newDept}")`;
   
   const connection = await connect();
@@ -17,7 +17,8 @@ async function addDept(newDept) {
       })
 }
 
-// Read all departments
+
+// 'Read' all departments
 async function viewAllDept() {
   const connection = await connect();
   const query = `SELECT id AS ID, dept_name AS Department FROM departments ORDER BY dept_name`;
@@ -28,9 +29,6 @@ async function viewAllDept() {
   }
   return display;
 }
-
-
-// Future Update department name
 
 
 //Delete a department
