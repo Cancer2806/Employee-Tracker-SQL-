@@ -20,8 +20,10 @@ function mainMenu() {
       choices: [
         "View All Employees",
         "View Employees by Dept",
+        "View Employees by Manager",
         "Add an Employee",
         "Update an Employee's Role",
+        "Update an Employee's Manager",
         "Delete an Employee",
         "View All Roles",
         "Add a Role",
@@ -84,9 +86,9 @@ async function getRoleDetails() {
       ])
 };
 
-// Delete a department
+// Delete a role
 async function selectRole() {
-  // function to populate the department list in the inquirer statement
+  // function to populate the roles in the inquirer statement
   const listRoles = [];
   await viewAllRoles()
     .then((result) => {
@@ -215,25 +217,58 @@ async function changeRole() {
   ])
 }
 
-async function selectEmployee() {
+
+async function selectEmployee(message) {
   // variables to hold arrays for choosing employee
   const listEmps = [];
   await viewAllEmployees()
     .then((results) => {
+      let strName;
       for (let i = 0; i < results.length; i++) {
-        let strName = `${results[i]["First Name"]} ${results[i]["Last Name"]}`
-        listEmps.push(strName);
+        // console.log(results[i]["Manager"]);
+        if (message === "Which manager's employees would you like to see:") {
+          if (results[i]["Manager"] === "Manager") {
+            strName = `${results[i]["First Name"]} ${results[i]["Last Name"]}`;
+            listEmps.push(strName);
+          }
+          
+        } else {
+        if (results[i]["Manager"] === "Manager") {
+          strName = `${results[i]["First Name"]} ${results[i]["Last Name"]} is a Manager`
+        } else {
+          strName = `${results[i]["First Name"]} ${results[i]["Last Name"]} reporting to ${results[i]["Manager"]}`
+        }
+          listEmps.push(strName);
+      };
       };
       listEmps.sort();
     })
-  return inquirer.prompt([
-    {
-      name: "employee",
-      type: "list",
-      message: "Which employee do you want to delete?",
-      choices: listEmps,
-    },
-  ])
+  if (message === "Which employee do you want to change") {
+    return inquirer.prompt([
+      {
+        name: "employee",
+        type: "list",
+        message: message,
+        choices: listEmps,
+      },
+      {
+        name: "manager",
+        type: "list",
+        message: "Who will the employee now report to - select self if Manager",
+        choices: listEmps,
+      }
+    ])
+    
+  } else {
+    return inquirer.prompt([
+      {
+        name: "employee",
+        type: "list",
+        message: message,
+        choices: listEmps,
+      }
+    ])
+  } 
 }
 
 

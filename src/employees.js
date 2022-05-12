@@ -67,6 +67,30 @@ async function viewDeptEmployees(dept) {
   return result;
 }
 
+// Read all employee records of a specified department
+async function viewEmployeesMgr(manager) {
+  const nameMgr = manager.split(" ");
+  
+  const connection = await connect();
+
+  // query to extract the managers id based on the manager's name
+  const queryMgr = `SELECT id FROM employees WHERE first_name = "${nameMgr[0]}" AND last_name = "${nameMgr[1]}"`;
+  const [mgrID] = await connection.query(queryMgr);
+  const mgr_id = mgrID[0].id;
+  
+  
+  // select query to print employee table, of a specified department, sorted by first name, with manager name, title and salary
+  const query = `SELECT employees.id as 'ID', first_name AS 'First Name', last_name AS 'Last Name', roles.title AS Title, roles.salary AS Salary FROM employees JOIN roles ON roles.id = role_id WHERE employees.manager_id = ${mgr_id} ORDER BY roles.title, first_name`;
+
+  // console.log(`query = ${query}`);
+
+  const [result] = await connection.query(query);
+  if (result.length === 0) {
+    console.log(`No employees found`);
+  }
+  return result;
+}
+
 // Update an employees role
 async function updateRole(empName, newRole) {
  // Break name into first and last for the query
@@ -96,6 +120,35 @@ async function updateRole(empName, newRole) {
     });
 }
 
+// Update an employees role
+async function updateManager(empName, manager) {
+  // Break name into first and last for the query
+  const nameEmp = empName.split(" ");
+  const nameMgr = manager.split(" ");
+  let updateQuery;
+
+  const connection = await connect();
+
+  // query to extract the managers id based on the manager's name
+  const queryMgr = `SELECT id FROM employees WHERE first_name = "${nameMgr[0]}" AND last_name = "${nameMgr[1]}"`;
+  const [mgrID] = await connection.query(queryMgr);
+  const mgr_id = mgrID[0].id;
+ 
+  // Query for updating the employees record
+  if (empName === manager) {
+    updateQuery = `UPDATE employees SET manager_id = NULL WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;  
+    } else {
+    updateQuery = `UPDATE employees SET manager_id = ${mgr_id} WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;
+  };
+
+  return connection.execute(updateQuery)
+    .then(() => {
+      console.log(`Update of ${nameEmp[0]} ${nameEmp[1]}'s manager was successful`);
+    })
+    .catch(() => {
+      console.log(`\n Update for ${nameEmp[0]} ${nameEmp[1]} failed`);
+    });
+}
 
 // Delete an employee
 async function deleteEmployee(empName) {
@@ -146,5 +199,7 @@ module.exports = {
   updateRole,
   viewDeptEmployees,
   deleteEmployee,
-  deptBudget
+  deptBudget,
+  updateManager,
+  viewEmployeesMgr
 };
