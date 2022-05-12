@@ -30,6 +30,8 @@ The application provides access to an SQL employee database via the terminal CLI
   Using the application is relatively simple.  A range of menu items will be presented.  Simply scroll up/down using the cursor up/down keys to the required command and press enter to execute.  The menu will scroll through the options on a loop.  Some options may not be visible at any particular time.  The application provides the opportunity to add or delete departments, roles and employees, although departments and roles cannot be deleted if they are linked to another table, to preserve integrity. If you wish to delete, you will need to reallocate the employees (in the case of roles) or the roles (in the case of departments) that are linked.  Use the Quit command to end the application.  If in doubt at any time, press the up/down arrow to return to the menu.   
 
   The webpage is located at this address:  https://github.com/Cancer2806/Employee-Tracker-SQL-/
+  
+  A video walkthrough of the application is provided at:  https://drive.google.com/file/d/1w6b3L6KUtBGvBlQDnSrCKrh7tUpjXD4J/view?usp=sharing
 
 A few screenshots of the application in use are provided below:
 ![Start Screen ](./assets/images/StartScreen.png)
