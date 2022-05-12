@@ -1,10 +1,9 @@
 // Define the required modules
 const inquirer = require('inquirer');
-const consoleTable = require('console.table')
 
-const { viewAllDept, addDept, deleteDept } = require('./departments');
-const { viewAllRoles, addRole } = require('./roles');
-const { viewAllEmployees, addEmployee, updateRole, viewDeptEmployees } = require('./employees');
+const { viewAllDept } = require('./departments');
+const { viewAllRoles } = require('./roles');
+const { viewAllEmployees } = require('./employees');
 
 /*WHEN I start the application THEN I am presented with the following options: 
 * view all departments, view all roles, view all employees, add a department, 
@@ -225,7 +224,6 @@ async function selectEmployee(message) {
     .then((results) => {
       let strName;
       for (let i = 0; i < results.length; i++) {
-        // console.log(results[i]["Manager"]);
         if (message === "Which manager's employees would you like to see:") {
           if (results[i]["Manager"] === "Manager") {
             strName = `${results[i]["First Name"]} ${results[i]["Last Name"]}`;
@@ -239,7 +237,7 @@ async function selectEmployee(message) {
           strName = `${results[i]["First Name"]} ${results[i]["Last Name"]} reporting to ${results[i]["Manager"]}`
         }
           listEmps.push(strName);
-      };
+        };
       };
       listEmps.sort();
     })
@@ -258,7 +256,6 @@ async function selectEmployee(message) {
         choices: listEmps,
       }
     ])
-    
   } else {
     return inquirer.prompt([
       {

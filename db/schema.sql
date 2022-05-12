@@ -1,4 +1,4 @@
- -- Check forr existing database and delete if found --
+ -- Check for existing database and delete if found --
 DROP DATABASE IF EXISTS employees_db;
 -- Create database --
 CREATE DATABASE employees_db;
@@ -15,6 +15,7 @@ CREATE TABLE departments (
 
 -- roles table will contain the job titles within the organisation --
 -- each role must be assigned to a department - link departments table with foreign key --
+-- department cannot be deleted whilst it has roles linked to it --
 CREATE TABLE roles (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(30) NOT NULL UNIQUE,
@@ -27,7 +28,9 @@ CREATE TABLE roles (
 
 -- employees table will contain the employees details --
 -- each employee must be assigned a role title - link roles table with foreign key --
+-- role cannot be deleted whilst it has employees linked to it --
 -- each employee may optionally be assigned to a manager who will also be listed in the employees table --
+-- employee cannot be deleted if other employees are reporting to that employee --
 CREATE TABLE employees (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30),

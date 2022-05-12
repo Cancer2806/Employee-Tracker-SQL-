@@ -107,7 +107,6 @@ function main() {
             .then((responses) => {
               const { newRole, newSalary, dept } = responses;
               addRole(newRole, newSalary, dept);
-              console.log(`\n ${newRole} added to Database \n`);
             });
           break;
       
@@ -136,7 +135,6 @@ function main() {
             .then((response) => {
               const { newDept } = response;
               addDept(newDept);
-              // console.log(`\n ${newDept} added to Database \n`);
             });
           break;
       
@@ -169,6 +167,7 @@ function main() {
     .then(() => {
       main();
     })
+
     .catch((error) => {
       console.log(`\n Something went wrong.  This is the error message: ${error}`);
     });

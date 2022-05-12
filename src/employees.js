@@ -1,5 +1,4 @@
 // Connect to Database
-const consoleTable = require('console.table');
 const { connect } = require("../db/connect");
 
 // Create a new employee
@@ -82,11 +81,9 @@ async function viewEmployeesMgr(manager) {
   // select query to print employee table, of a specified department, sorted by first name, with manager name, title and salary
   const query = `SELECT employees.id as 'ID', first_name AS 'First Name', last_name AS 'Last Name', roles.title AS Title, roles.salary AS Salary FROM employees JOIN roles ON roles.id = role_id WHERE employees.manager_id = ${mgr_id} ORDER BY roles.title, first_name`;
 
-  // console.log(`query = ${query}`);
-
   const [result] = await connection.query(query);
   if (result.length === 0) {
-    console.log(`No employees found`);
+    console.log(`No employees report to this manager`);
   }
   return result;
 }
@@ -103,24 +100,19 @@ async function updateRole(empName, newRole) {
   const [queryID] = await connection.query(queryRole);
   const role_id = queryID[0].id;
   
-  // query to extract the employee ID based on first and last name
-  const empQuery = `SELECT id FROM employees WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;
-  const [employID] = await connection.query(empQuery);
-  const empId = employID[0].id;
-  
   // Query for updating the employees record
   const updateQuery = `UPDATE employees SET role_id = ${role_id} WHERE first_name = "${nameEmp[0]}" AND last_name = "${nameEmp[1]}"`;
    
   return connection.execute(updateQuery)
     .then(() => {
-      console.log(`Update of ${empName}'s was successful`);
+      console.log(`Update of ${nameEmp[0]} ${nameEmp[1]}'s was successful`);
     })
     .catch(() => {
-      console.log(`\n Update for ${empName} failed`);
+      console.log(`\n Update for ${nameEmp[0]} ${nameEmp[1]} failed`);
     });
 }
 
-// Update an employees role
+// Update an employees manager
 async function updateManager(empName, manager) {
   // Break name into first and last for the query
   const nameEmp = empName.split(" ");
@@ -143,7 +135,7 @@ async function updateManager(empName, manager) {
 
   return connection.execute(updateQuery)
     .then(() => {
-      console.log(`Update of ${nameEmp[0]} ${nameEmp[1]}'s manager was successful`);
+      console.log(`\n Update of ${nameEmp[0]} ${nameEmp[1]}'s manager was successful`);
     })
     .catch(() => {
       console.log(`\n Update for ${nameEmp[0]} ${nameEmp[1]} failed`);
@@ -161,10 +153,10 @@ async function deleteEmployee(empName) {
 
   return connection.execute(deleteQuery)
   .then(() => {
-    console.log(`Deletion of ${empName} was successful`);
+    console.log(`\n Deletion of ${nameEmp[0]} ${nameEmp[1]} was successful`);
   })
     .catch(() => {
-      console.log(`\n Cannot delete ${empName}`);
+      console.log(`\n Cannot delete ${nameEmp[0]} ${nameEmp[1]}`);
     })
 }
 

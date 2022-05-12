@@ -1,10 +1,7 @@
 // Define the required modules
-// const consoleTable = require('console.table')
-// const { viewAllDept,  } = require('./departments');
 
 // Connect to Database
 const { connect } = require("../db/connect");
-
 
 // Create a new role
 async function addRole(newRole, newSalary, dept) {
@@ -25,8 +22,7 @@ async function addRole(newRole, newSalary, dept) {
       console.log(`\n ${newRole} already exists`);
     })
 }
-
-// Read all roles
+// 'Read' all roles
 async function viewAllRoles() {
   const connection = await connect();
   // query to display all roles joined with departments and sorted by department name
@@ -34,14 +30,14 @@ async function viewAllRoles() {
 
   const [result] = await connection.query(query);
   if (result.length === 0) {
-    console.log(`No roles found`);
+    console.log(`\n No roles found`);
   }
   return result;
 }
 
 
-// Future Delete a role
-// Only permitted if their are no employees with the role - enforced by Delete No Action
+// Delete a role
+// Only permitted if there are no employees with the role - enforced by Delete No Action
 async function deleteRole(role) {
   const query = `DELETE FROM roles WHERE title = "${role}"`;
 
@@ -49,7 +45,7 @@ async function deleteRole(role) {
 
   return connection.execute(query)
     .then(() => {
-      console.log(`Deletion of ${role} was successful`);
+      console.log(`\n Deletion of ${role} was successful`);
     })
     .catch(() => {
       console.log(`\n Cannot delete ${role} if there are employees in that role`);

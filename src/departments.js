@@ -40,7 +40,7 @@ async function deleteDept(dept) {
   
   return connection.execute(query)
       .then(() => {
-        console.log(`Deletion of ${dept} was successful`);
+        console.log(`\n Deletion of ${dept} was successful`);
       })
       .catch(() => {
         console.log(`\n Cannot delete ${dept} if roles are attached to the Department`);
